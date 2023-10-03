@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+//using UnityEngine.SceneManagement;
 using TMPro;
 
 public class MovimientoPersonaje : MonoBehaviour
@@ -11,16 +11,54 @@ public class MovimientoPersonaje : MonoBehaviour
     public float fuerzaSalto;
     bool parado = false;
     float segundos = 2;
+    public static string mensaje = "";
+    public GameObject panelPerder;
     //public TMP_Text textoDerrota;
     // Start is called before the first frame update
     void Start()
     {
         //fuerzaSalto = 5f;
         rb = GetComponent<Rigidbody2D>();
+        panelPerder = GameObject.Find("PanelPerder");
+        Debug.Log(panelPerder);
+        panelPerder.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
+    {
+        moverPersonaje();
+    }
+
+    void FixedUpdate()
+    {
+        // Velocidad lateral y vertical del personaje
+        Vector2 vector = new Vector2(movX * 7, movY * 7);
+        rb.velocity = vector;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //estaEnElSuelo = true;
+        //
+
+
+        
+        //TMP_Text texto = GameObject.Find("TextoDerrota").GetComponent<TMP_Text>();
+        //TextoPerdido.texto.text = "Test";
+
+        if (collision.gameObject.tag == "Pared")
+        {
+
+            panelPerder.SetActive(true);
+            //SceneManager.LoadScene(1);
+            parado = true;
+            //mensaje = TextoPerdido.texto
+            Debug.Log("A");
+        }
+    }
+
+    void moverPersonaje()
     {
         if (!parado)
         {
@@ -39,29 +77,6 @@ public class MovimientoPersonaje : MonoBehaviour
                 segundos = 2;
             }
             // https://www.youtube.com/watch?v=dgMImeoZG5w
-        }
-    }
-
-    void FixedUpdate()
-    {
-        // Velocidad lateral y vertical del personaje
-        Vector2 vector = new Vector2(movX * 7, movY * 7);
-        rb.velocity = vector;
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        //estaEnElSuelo = true;
-        //
-
-        //SceneManager.LoadScene(1);
-        //TMP_Text texto = GameObject.Find("TextoDerrota").GetComponent<TMP_Text>();
-        //TextoPerdido.texto.text = "Test";
-
-        if (collision.gameObject.tag == "Pared")
-        {
-            parado = true;
-            Debug.Log("A");
         }
     }
 }
