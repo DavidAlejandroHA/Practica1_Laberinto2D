@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraClamp : MonoBehaviour
 {
     public Transform target;
-    float bordePrincipioX = -2.6f;
+    float bordePrincipioX = -3.392f;
     float bordeFinalX = 25.5f;
     float bordePrincipioY = 0f;
     float bordeFinalY = 14.08f;
