@@ -8,6 +8,9 @@ TagManager:
   - EstrellaFinal
   - Personaje
   - EstrellaColeccionable
+  - llave
+  - puertaEstrella
+  - pocion
   layers:
   - Default
   - TransparentFX

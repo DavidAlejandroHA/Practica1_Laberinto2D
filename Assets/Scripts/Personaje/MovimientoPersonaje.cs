@@ -22,6 +22,7 @@ public class MovimientoPersonaje : MonoBehaviour
     string textoTiempoRestante;
     string textoVidas;
     bool pausado = false;
+    bool puertaAbierta = false;
 
     
     //string textoMensajeAlGanar;
@@ -45,9 +46,6 @@ public class MovimientoPersonaje : MonoBehaviour
         TextoTiempo.texto.text = TextoTiempo.texto.text + TextoTiempo.timer + "s";
         textoVidas = VidasTexto.texto.text;
         VidasTexto.texto.text = textoVidas + vidas;
-        //Debug.Log(TextoTiempo.texto.text); 
-        //textoTiempoRestante = TextoTiempo.texto.text;
-        //textoMensajeAlGanar = TextoMensaje.texto.text;
     }
 
     // Update is called once per frame
@@ -110,6 +108,13 @@ public class MovimientoPersonaje : MonoBehaviour
             
             //Debug.Log("A");
         }
+        else if (collision.gameObject.tag == "puertaEstrella")
+        {
+            if (puertaAbierta)
+            {
+                Destroy(collision.gameObject);
+            }
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -143,6 +148,14 @@ public class MovimientoPersonaje : MonoBehaviour
             panelGanar.SetActive(true);
             pausado = true;
             PauseGame();
+        } else if (collision.gameObject.tag == "llave")
+        {
+            puertaAbierta = true;
+            Destroy(collision.gameObject);
+        } else if (collision.gameObject.tag == "pocion")
+        {
+            transform.localScale = transform.localScale * 0.5f;
+            Destroy(collision.gameObject);
         }
     }
 
@@ -188,6 +201,7 @@ public class MovimientoPersonaje : MonoBehaviour
 
     void PauseGame()
     {
+        ParedMovimiento.pausado = true;
         Time.timeScale = 0;
     }
 }
