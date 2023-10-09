@@ -18,6 +18,12 @@ public class MovimientoPersonaje : MonoBehaviour
     public float estrellasConseguidas = 0;
     string textoPuntuacionAlPerderOriginal;
     string textoPuntuacionAlGanarOriginal;
+    string textoEstrellasConseguidas;
+    string textoTiempoRestante;
+    string textoVidas;
+    bool pausado = false;
+
+    
     //string textoMensajeAlGanar;
     public int vidas = 3;
     //public TMP_Text textoDerrota;
@@ -33,13 +39,23 @@ public class MovimientoPersonaje : MonoBehaviour
         panelGanar.SetActive(false);
         textoPuntuacionAlPerderOriginal = TextoPuntuacionPerder.texto.text;
         textoPuntuacionAlGanarOriginal = TextoPuntuacionGanar.texto.text;
+        textoEstrellasConseguidas = TextoEstrellas.texto.text;
+        TextoEstrellas.texto.text = textoEstrellasConseguidas + estrellasConseguidas;
+        textoTiempoRestante = TextoTiempo.texto.text;
+        TextoTiempo.texto.text = TextoTiempo.texto.text + TextoTiempo.timer + "s";
+        textoVidas = VidasTexto.texto.text;
+        VidasTexto.texto.text = textoVidas + vidas;
+        //Debug.Log(TextoTiempo.texto.text); 
+        //textoTiempoRestante = TextoTiempo.texto.text;
         //textoMensajeAlGanar = TextoMensaje.texto.text;
     }
 
     // Update is called once per frame
     void Update()
     {
+        actualizarTiempo();
         moverPersonaje();
+        perderSiSeAcabaElTiempo();
     }
 
     void FixedUpdate()
@@ -49,6 +65,26 @@ public class MovimientoPersonaje : MonoBehaviour
         rb.velocity = vector;
     }
 
+    void perderSiSeAcabaElTiempo()
+    {
+        if (!pausado)
+        {
+            if (TextoTiempo.timer <= 0)
+            {
+                pausado = true;
+                panelPerder.SetActive(true);
+                TextoPuntuacionPerder.texto.text = TextoPuntuacionPerder.texto.text + puntos;
+                PauseGame();
+            }
+        }
+    }
+
+    void aumentarEstrellasConseguidas()
+    {
+        estrellasConseguidas++;
+        TextoEstrellas.texto.text = textoEstrellasConseguidas + estrellasConseguidas;
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         //TMP_Text texto = GameObject.Find("TextoDerrota").GetComponent<TMP_Text>();
@@ -56,6 +92,7 @@ public class MovimientoPersonaje : MonoBehaviour
         if (collision.gameObject.tag == "Pared")
         {
             vidas--;
+            VidasTexto.texto.text = textoVidas + vidas;
             if (vidas > 0)
             {
                 // Reducir actualizar el texto de las vidas
@@ -64,13 +101,14 @@ public class MovimientoPersonaje : MonoBehaviour
             {
                 // Pantalla de perder
                 panelPerder.SetActive(true);
+                TextoPuntuacionPerder.texto.text = TextoPuntuacionPerder.texto.text + puntos;
                 PauseGame();
             }
             
             //SceneManager.LoadScene(1);
             parado = true;
-            //mensaje = TextoPerdido.texto
-            Debug.Log("A");
+            
+            //Debug.Log("A");
         }
     }
 
@@ -79,7 +117,7 @@ public class MovimientoPersonaje : MonoBehaviour
         if (collision.gameObject.tag == "EstrellaColeccionable")
         {
             puntos++;
-            estrellasConseguidas++;
+            aumentarEstrellasConseguidas();
             Destroy(collision.gameObject);
             TextoPuntuacionGanar.texto.text = textoPuntuacionAlGanarOriginal + puntos;
         } else if (collision.gameObject.tag == "EstrellaFinal")
@@ -103,6 +141,7 @@ public class MovimientoPersonaje : MonoBehaviour
             TextoMensaje.texto.text += mensajeExtra;
 
             panelGanar.SetActive(true);
+            pausado = true;
             PauseGame();
         }
     }
@@ -128,6 +167,22 @@ public class MovimientoPersonaje : MonoBehaviour
                 segundos = 2;
             }
             // https://www.youtube.com/watch?v=dgMImeoZG5w
+        }
+    }
+
+    void actualizarTiempo()
+    {
+        if (!pausado)
+        {
+            TextoTiempo.timer -= Time.deltaTime;
+            if (TextoTiempo.timer > 0)
+            {
+                TextoTiempo.texto.text = textoTiempoRestante + TextoTiempo.timer.ToString("f1") + "s";
+            }
+            else
+            {
+                TextoTiempo.texto.text = textoTiempoRestante + "0";
+            }
         }
     }
 
